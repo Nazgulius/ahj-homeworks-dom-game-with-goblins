@@ -3,9 +3,9 @@ export default class GameController {
     this.gamePlay = gamePlay;
     this.goblin = document.querySelector('.goblin'); // находим гоблина 
     this.result = document.createElement('p'); // создаётся результат  
-    this.result.className = "result";  
-    document.body.append(this.result);  
-    this.updateResult(); // Инициализируем результат при создании  
+    this.result.className = "result";
+    document.body.append(this.result);
+    this.updateResult(); // Инициализируем результат при создании 
   }
 
   init() {
@@ -13,30 +13,48 @@ export default class GameController {
       console.error("Goblin not found!"); // Это поможет вам отладить  
       return; // Если гоблин не найден, выходим из метода  
     }
-    //const goblin = document.querySelector('.goblin'); // находим гоблина 
     this.gamePlay.addCellClickListener(this.logicMoveGoblin.bind(this));
+
+    this.startGoblinMovement();
 
     this.goblin.addEventListener('click', () => {
       this.logicMoveGoblin();
       this.gamePlay.incrementHit();
       this.updateResult();
-    })
 
-    // обработчик случайных перемещений
-    let timerId = setInterval(() => {
+      // Останавливаем предыдущий таймер, если он существует
+      this.startGoblinMovement();
+    })
+  }
+
+  startGoblinMovement() {
+    // Останавливаем предыдущий таймер, если он существует  
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
+
+    // Запускаем новый таймер  
+    this.timerId = setInterval(() => {
       this.logicMoveGoblin();
       this.gamePlay.incrementMiss();
       this.updateResult();
 
-      // логика прекращения игры
+      // Проверка на окончание игры  
       if (this.gamePlay.countMiss >= 5) {
-        clearInterval(timerId);
+        clearInterval(this.timerId);
         alert('Game Over');
       }
-    }, 1000);
-
-
+    }, 1000); // время для перемещения
   }
+
+  onHit() {
+    this.gamePlay.incrementHit(); // Увеличиваем количество попаданий  
+    this.updateResult(); // Обновляем результат на HTML  
+
+    // Сбрасываем таймер при клике  
+    this.startGoblinMovement();
+  }
+
 
   logicMoveGoblin() {
     const colAll = document.querySelectorAll('.col'); // находит все col 
