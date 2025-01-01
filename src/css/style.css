@@ -1,0 +1,13 @@
+body {
+    color: #000000;
+}
+
+.table {
+  background-color: rgb(206, 203, 203);
+}
+
+.col {
+  background-color: rgb(218, 243, 218);  
+  width: 120px;
+  height: 120px;
+}
